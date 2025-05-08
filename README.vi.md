@@ -17,7 +17,7 @@
   - [Tuần 1 - Typescript \& Git](#tuần-1---typescript--git)
     - [Ngày 1 - Typescript cơ bản](#ngày-1---typescript-cơ-bản)
       - [Khai báo biến](#khai-báo-biến)
-      - [Các kiểu dũ liệu cơ bản](#các-kiểu-dũ-liệu-cơ-bản)
+      - [Các kiểu dữ liệu cơ bản](#các-kiểu-dữ-liệu-cơ-bản)
       - [Các kiểu dữ liệu chỉ "không"](#các-kiểu-dữ-liệu-chỉ-không)
         - [Khác biệt giữa `undefined`, `null` và `unknown`](#khác-biệt-giữa-undefined-null-và-unknown)
       - [any](#any)
@@ -48,7 +48,7 @@
 - `let`: dùng để khai báo biến bình thường, có thể thay đổi giá trị
 - `const`: dùng để khai báo hằng số, không thể thay đổi giá trị
 
-#### Các kiểu dũ liệu cơ bản
+#### Các kiểu dữ liệu cơ bản
 
 - `string`: chuỗi, được thể hiện bằng `""` hoặc `''`. Ví dụ: `"đây là một chuỗi"`
 - `number`: số, có thể là số nguyên, hoặc số có dấu chấm động. Ví dụ: `1`, `1.234`
@@ -132,7 +132,7 @@ lgo('hehe')
 
 **Typescript** với hệ thống kiểm tra kiểu dữ liệu sẽ chỉ có thể giúp chúng ta trong build time, tức là trong lúc code và đến trước khi compile sang javascript. Còn trong runtime, lúc chương trình được chạy, **SẼ KHÔNG CÓ BẤT KÌ KIỂM TRA KIỂU NÀO** nếu chúng ta không chủ đích kiểm tra bằng runtime type check (toán tử *typeof*, *instanceof*). 
 
-Vì lí do này, `unknown` hiện lên như một lời nhắc nhỡ với chúng ta, **"Hãy check kiểu của cái này đi, biết kiểu rồi hãy thực hiện logic, nguy hiểm đó".** vì nếu một dữ liệu có kiểu `unknown` compiler sẽ yêu cầu thực hiện kiểm tra kiểu trước khi truy cập vào, properties, methods hoặc prototype và điều đó giúp giảm thiểu lỗi xảy ra ở runtime do sai kiểu dữ liệu. 
+Vì lí do này, `unknown` hiện lên như một lời nhắc nhỡ, **"Hãy check kiểu của cái này đi, biết kiểu rồi hãy thực hiện logic, nguy hiểm đó".** vì nếu một dữ liệu có kiểu `unknown` compiler sẽ yêu cầu thực hiện kiểm tra kiểu trước khi truy cập vào, properties, methods hoặc prototype và điều đó giúp giảm thiểu lỗi xảy ra ở runtime do sai kiểu dữ liệu. 
 
 > ‼️ Kiểm tra kiểu liên tục sẽ làm giảm performance của hệ thống, typeof, instanceof hoặc các hàm kiểm tra kiểu built-in thì không đáng kể, còn lại chỉ nên check kiểu tại runtime khi thực sự quan trọng. Có thể dùng thư viện như **zod**, cho các kiểu phức tạp. 
 
@@ -325,7 +325,7 @@ function add(a: number, b: number): number{
 }
 ```
 
-Đoạn code này sẽ không bị lỗi gì khi chạy cả, vì khai báo hàm *add* sẽ được kéo lên trước dù hiện tại ta thấy nó được khai báo sau khi dùng.
+Đoạn code này sẽ **KHÔNG LỖI** gì khi chạy cả, vì khai báo hàm *add* sẽ được kéo lên trước dù hiện tại ta thấy nó được khai báo sau khi dùng.
 
 ```typescript
 
@@ -336,7 +336,7 @@ const add = function(a: number, b: number): number {
 } // Lỗi thực thi
 ```
 
-Đoạn code này bị lỗi thực thi, *add* được gọi trước khi khai báo.
+Đoạn code này bị **LỖI THỰC THI**, *add* được gọi trước khi khai báo.
 
 #### Tham số của hàm
 
