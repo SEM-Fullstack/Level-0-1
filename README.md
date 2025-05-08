@@ -2,5 +2,5 @@
 
 ## Languages
 
-[Tiếng Việt](./README.vi.md)
+[Tiếng Việt](./README.vi.md) | 
 [English](./README.en.md)
