@@ -35,6 +35,11 @@
         - [Tham số tuỳ chọn - không bắt buộc (optional)](#tham-số-tuỳ-chọn---không-bắt-buộc-optional)
         - [Tham số "rest", "còn lại"](#tham-số-rest-còn-lại)
         - [Tham số có giá trị mặc định, `default param`](#tham-số-có-giá-trị-mặc-định-default-param)
+    - [Ngày 3 - Classes \& OOP (Class và Hướng đối tượng)](#ngày-3---classes--oop-class-và-hướng-đối-tượng)
+      - [OOP trong Typescript](#oop-trong-typescript)
+      - [Inheritance, Abstraction \& Polimorphism](#inheritance-abstraction--polimorphism)
+        - [Inheritance \& Polymorphism](#inheritance--polymorphism)
+        - [Abstraction](#abstraction)
 
 
 ## Tuần 1 - Typescript & Git
@@ -344,7 +349,7 @@ Dù được khai báo như thế nào thì thành phần quan trọng nhất t�
 
 ##### Tham số (tham số thông thường)
 
-Là các tham số được nêu tên trong phần khai báo tham số trong hàm, và bắt buộc phải có giá trị khi gọi hàm.
+Là các tham số được nêu tên trong phần khai báo tham số trong hàm, và **BẮT BUỘC** phải có giá trị khi gọi hàm.
 
 ```typescript
 function add(a: number, b): number {
@@ -426,3 +431,387 @@ add(1); // 2
 add(1,2); // 3
 ```
 
+### Ngày 3 - Classes & OOP (Class và Hướng đối tượng)
+
+`OOP (Object-Oriented Programming)` lập trình hướng đối tượng là một trường phái lập trình mô phỏng đối tượng trong thực tế.
+
+Khái niệm cơ bản:
+
+- `Class (lớp)`: class có vai trò như là một bản thiết kế (blueprint), chỉ định rằng đối tượng sẽ có `properties (dữ liệu)` và `methods (hành vi)` gì.
+- `Object / instance (đối tượng)`: là một "cụ thể hoá" của class, chứa dữ liệu thực và hành vi tác động đến dữ liệu thực.
+
+Ví du:
+
+Chúng ta đang làm một hệ thống quản lý thư viện cho nhà trường, trong đó, sách có các dữ liệu như:
+- Tên (title)
+- Tác giả (author)
+- Thể loại (genres)
+- Năm xuất bản (published year)
+
+Những dữ liệu trên này gọi là `properties`. Và sách có thể được mượn và trả
+
+- Mượn (borrow)
+- Trả (return)
+
+Các hành vi đến sách này gọi là `methods`
+
+Vậy là chúng ta đã có định nghĩa cho class `Book`.
+
+Quyển `Cuốn theo chiều gió` của `Margaret Mitchell` thuộc thể loại `Tiểu thuyết` được phát hành (tái bản) năm `2024` là một cụ thể hoá của class Book, nó sẽ được gọi là một `object hoặc một instance`.
+
+**OOP** có 4 tính chất chính:
+
+- `Encapsulation (đóng gói)`: "giấu" dữ liệu và hành vi, không cho người dùng (class khác, đối tượng khác) biết được, dùng được hoặc suy đoán được.
+- `Inheritance (kế thừa)`: có thể kế thừa bản thiết kế từ class khác để tạo nên một bản thiết kế **cụ thể, chi tiết hơn**.
+- `Polymorphism (đa hình)`: với cùng một thiết kế, có thể có những hành vi cụ thể khác nhau, ví dụ, hành vi mượn sách, mượn có thể có thời hạn khác nhau phụ thuộc vào cấp bậc của người mượn chẵn hạn.
+- `Abstraction (trừu tượng)`: tạo một giới hạn trách nhiệm của class, qua đó thông báo cho người dùng (class khác, đối tượng khác) biết được nó có thể **làm** gì mà không cần biết cụ thể nó sẽ làm như thế nào.
+
+
+#### OOP trong Typescript
+
+Trong **Typescript** chúng ta có thể khai báo một class bằng từ khoá `class`.
+
+```typescript
+class Book {
+    // properties
+    // methods
+}
+```
+
+Trong mỗi class declaration sẽ có một phương thức đặc biệt gọi là `constructor (phương thức khởi tạo)`. Constructor sẽ được gọi khi mà một instance mới được tạo ra bằng từ khoá `new`. Trong Typescript chúng ta có thể khai báo constructor tường minh hoặc không.
+
+```typescript
+class Book {
+    // properties
+    // methods
+    constructor(){
+
+    }
+}
+```
+
+Constructor tuân thủ theo mọi quy ước của hàm số.
+
+Để có thể **đóng gói** dữ liệu và hành vi, Typescript cung cấp một bộ `Access Modifier`:
+
+- *public (default)*: cho phép mọi người dùng có thể đọc/ghi/gọi.
+- *private*: không cho phép bất kỳ ai ngoại trừ chính bản thân class hiện tại đọc/ghi/gọi.
+- *protected*: cho phép mọi class kế thừa từ class hiện tại có thể đọc/ghi/gọi.
+
+Ngoài ra, còn một cách kiểm soát mềm đối với dữ liệu đó là `readonly`, khi properties được gán readonly thì kể từ sau khi được gán giá trị lần đầu, nó sẽ không được phép gán lại giá trị nữa.
+
+```typescript
+class Book {
+    private title: string;
+    private author: string;
+    private publishedYear: string;
+
+    constructor(
+        title: string,
+        author: string,
+        publishedYear: string,
+    ){
+        this.title = title;
+        this.author = author;
+        this.publishedYear = publishedYear;
+    }
+
+    public borrow(){
+        console.log(`Borrowed: ${this.title}`);
+    }
+
+    public return(){
+        console.log(`Returned: ${this.title}`);
+    }
+}
+
+const goneWithTheWind = new Book(
+    'Gone With The Wind',
+    'Margaret Mitchell',
+    2024
+)
+
+console.log(goneWithTheWind.title); //Syntax error, the title is private, cannot be access by the outer consummers.
+
+goneWithTheWind.borrow(); // 'Borrowed: Gone With The Wind'
+```
+
+Để kiểm tra một instance có phải thuộc một class cụ thể nào đó hay không, chúng ta có thể dùng toán tử `instanceof`.
+
+Ví dụ:
+
+```typescript
+console.log(goneWithTheWind instanceof Book); // true
+```
+
+`instanceof` sẽ kiểm tra `prototype` của instance với prototype của class và cũng không phụ thuộc vào interface hay type.
+
+> ‼️‼️ Không dùng instanceof với interfaces hoặc types
+
+#### Inheritance, Abstraction & Polimorphism
+
+Trong Typescript, kế thừa, trừu tượng và đa hình cũng sẽ được thể hiện.
+
+##### Inheritance & Polymorphism
+
+Một class có thể kế thừa lại một class khác, dùng từ khoá `extends` (đừng nhầm với type extends).
+
+```typescript
+class Book {
+    constructor(
+        private title: string,
+        private author: string,
+        private genre: string[],
+    ){}
+
+    borrow(){
+        console.log(`Borrow: ${this.title}`);
+    }
+
+    return(){
+        console.log(`Return: ${this.title}`);
+    }
+}
+
+class Ebook extends Book {
+    constructor(
+        private title: string,
+        private author: string,
+        private genre: string[],
+        private server: string,
+    ){
+        super(title, author, genre);
+    }
+
+    // Overriding
+    borrow(){
+        console.log(`EBorrow: ${this.title}`);
+    }
+
+    download(){
+        console.log(`Download: ${this.title}`);
+    }
+}
+
+const gwtwEbook = new Ebook(
+    'Gone With The Wind',
+    'Margaret Mitchell',
+    2024,
+    'Server1'
+);
+
+gwtwEbook.borrow(); // EBorrow: Gone With The Wind
+gwtwEbook.return(); // Returned: Gone With The Wind
+gwtwEbook.download(); // Download: Gone With The Wind
+```
+
+Một class kế thừa một class khác có thể bổ sung "dữ liệu" hoặc "hành vi" cụ thể chi tiết hơn, như trong ví dụ trên, Ebook cần có thêm **server** và **download**.
+
+Class kế thừa cũng có thể `override (ghi đè)` lại hành vi của class được kế thừa. **Ebook** đã override lại **borrow** của **Book**.
+
+Vậy nếu chúng ta có thêm một class khác cũng kế thừa từ `Book`.
+
+```typescript
+class HardcoverBook extends Book {
+    borrow(){
+        console.log(`Borrow hardcover book: ${this.title}`);
+    }
+}
+
+function main(){
+    const books: Book[] = [
+        new Ebook(
+            'Gone With The Wind',
+            'Margaret Mitchell',
+            2024,
+            'Server1'
+        ),
+        new HardcoverBook(
+            'Gone With The Wind',
+            'Margaret Mitchell',
+            2024
+        ),
+    ];
+
+    for(const b of books){
+        b.borrow();
+    }
+}
+
+main();
+// Eborrow: Gone With The Wind
+// Borrow hardcover book: Gone With The Wind
+```
+
+Khả năng tìm đến thực thi phù hợp cho từng class cụ thể, gọi là `polymorphism (đa hình)`.
+
+##### Abstraction
+
+`interface` và `implements` là hai từ khoá giúp Typescript thực hiện tính chất Abstraction trong OOP.
+
+`interface` là bản hợp đồng, cho biết những người tuân theo hợp đồng này có thể làm gì (what) nhưng không quan tâm là làm như thế nào (how).
+
+`implements` là từ khoá giúp một class hiện tự hoá, định nghĩa hành vi theo hợp đồng / interface nhất định (có thể là một hoặc nhiều).
+
+```typescript
+interface IBorrowable{
+    borrow: ()=>void;
+}
+
+class Book implements IBorrowable {
+    borrow(){
+        console.log('Borrow book');
+    }
+}
+
+class Pen implements IBorrowable {
+    borrow(){
+        console.log('Borrow pen');
+    }
+}
+
+function main(){
+    const borrowableList: IBorrowable[] = [
+        new Book(),
+        new Pen(),
+    ];
+
+    for(const borrowable of borrowableList){
+        borrowable.borrow();
+    }
+}
+
+main()
+```
+
+Trong ví dụ trên, `IBorrowable` định nghĩa một hợp đồng, nói rằng mọi class tuân theo hợp đồng này đều có một phương thức _borrow_.
+
+`Book` và `Pen` hiện thực hoá `IBorrowable` bằng cách `implements` phương thức _borrow_ theo cách riêng của từng class.
+
+Hàm `main`, biết rằng, trong borrowableList, mỗi item đều có thể gọi _borrow_, nhưng hàm main sẽ không quan tâm phương thức _borrow_ của mỗi item được hiện thực hoá như thế nào.
+
+Chúng ta cũng có thể tạo một kiểu trừu tượng khác bằng từ khóa `abstract`.
+
+```typescript
+abstract class Borrowable {
+    title:string;
+
+    return(): void {
+        console.log(`Returned: ${this.title}`); 
+    }
+
+    abstract borrow(): void{
+        // Không có định nghĩa trong này
+        // Phương thức trừu tượng phải rỗng
+    }
+}
+```
+
+`abstract` class sẽ nhắc các class kế thừ từ nó phải hiện thực hoá phương thức _borrow_. Abstract class còn cho phép chúng ta hiện thực hoá một phần, *return* là phần hiện thực mặc định cho hành vi _trả sách_ nhưng nếu không thích thì các class kế thừa có thể "ghi đè".
+
+Điều cần chú ý là abstract class **KHÔNG THỂ TỰ TẠO INSTANCE**, tức là nó không thể sử dụng với `new` và không có `constructor`.
+
+Buộc phải tạo một class khác để kế thừa và tạo instance thông qua class kế thừa đó.
+
+**So sánh abstraction bằng `interface` và bằng `abstract class`**:
+
+| Tiêu Chí                                      | **Interface**                                                                                          | **Abstract Class**                                                                                                      |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| 🧑‍🏫 **Khái Niệm Chính**                         | Định nghĩa *hợp đồng* (contract) — chỉ nói **"bắt buộc phải có gì"**, không nói **"làm như thế nào"**. | Định nghĩa *hợp đồng + một phần triển khai* — nói **"bắt buộc phải có gì"** và **"cái gì đã có sẵn"**.                  |
+| 🧱 **Triển Khai Logic Sẵn (Implementation)**   | ❌ Không thể có logic sẵn.                                                                              | ✅ Có thể cung cấp logic mặc định cho một số phương thức.                                                                |
+| 🛠️ **Ép buộc Phải Triển Khai**                 | ✅ Bắt buộc tất cả các phương thức, property được khai báo phải được triển khai.                        | ✅ Tương tự, nhưng có thể có **method đã được cài sẵn** nên không bắt buộc phải override tất cả.                         |
+| 🧬 **Kế thừa (Inheritance)**                   | ✅ Hỗ trợ **đa kế thừa** (implement nhiều interface cùng lúc).                                          | ❌ Chỉ kế thừa **một abstract class** (single inheritance).                                                              |
+| 🧑‍💻 **Kiểu Runtime (Thực thi)**                 | ❌ **Không tồn tại ở runtime** — chỉ tồn tại trong compile-time.                                        | ✅ **Tồn tại ở runtime** dưới dạng **class** — có thể kiểm tra bằng `instanceof`.                                        |
+| 🛑 **Hạn chế Kiểm Tra Runtime (`instanceof`)** | ❌ Không kiểm tra được bằng `instanceof`.                                                               | ✅ Kiểm tra được bằng `instanceof`.                                                                                      |
+| 🧠 **Mục đích Sử Dụng**                        | Định nghĩa **hợp đồng** cho behavior/phân vai (role-based behavior), **nhẹ, không logic**.             | Định nghĩa **cấu trúc + một phần logic sẵn**, thích hợp cho **cây thừa kế phức tạp** hoặc **skeleton implementations**. |
+| ⚡ **Dùng Khi Nào?**                           | - Muốn mô tả **nhiều vai trò**. <br> - Cần **đa kế thừa** behavior.<br> - Không cần logic có sẵn.      | - Muốn **tái sử dụng một phần logic**. <br> - Cần **tạo bộ khung** cho hệ thống **theo thứ bậc**.                       |
+| 💼 **Ví dụ Thực Tế**                           | `Drawable`, `Serializable`, `Logger`, `Borrowable`, `Plugin`                                           | `AbstractAnimal`, `AbstractPaymentMethod`, `BaseComponent`, `BaseController`                                            |
+
+Một lưu ý khi đụng đến kế thừa trong OOP.
+
+> ‼️‼️ Prefer composition over inheritance.
+> (Kết hợp nhiều class sẽ tốt hơn là kế thừa)
+
+Điều này không có nghĩa là _không được kế thừa_, nhưng ý nói là, nếu có thể hiện thực hoá một hành vi bằng cách kết hợp các class riêng lẻ lại với nhau, hãy chọn cách đó.
+
+Khi một class được định nghĩa bởi `inheritance` chúng ta nói nó **"cũng là"**, khi được định nghĩa bởi `composition` chúng ta nói nó **"cũng có thể"**.
+
+```typescript
+class Character {
+  move() {
+    console.log("Walking");
+  }
+}
+
+class FlyingCharacter extends Character {
+  move() {
+    console.log("Flying");
+  }
+}
+
+class SwimmingCharacter extends Character {
+  move() {
+    console.log("Swimming");
+  }
+}
+
+```
+
+Trong cách code trên, thông qua kế thừa từ **Character**, chúng ta định nghĩa từng loại character với cách di chuyển khác nhau, như là: đi, bay, bơi,... Vậy nếu muốn một character vừa bay được vừa bơi được thì chúng ta sẽ phải tiếp tục định nghĩa thêm một class `FlyingAndSwimmingCharacter`.
+
+Điều này, làm cho code khó mở rộng vì phải liên tục tạo mới các class để cho từng loại character khác nhau.
+
+Vậy để dễ mở rộng hơn, và không định nghĩa character "là" nữa, mà dựa trên "có thể làm" chúng ta sẽ gôm những hành vi di chuyển ra, và không để Character bị phụ thuộc vào nó nữa.
+
+```typescript
+interface MovementBehavior {
+    move: ()=>void;
+}
+
+class FlyingBehavior implements MovementBehavior {
+    move(){
+        console.log('Flying');
+    }
+}
+
+class SwimmingBehavior implements MovementBehavior {
+    move(){
+        console.log('Swimming');
+    }
+}
+
+class Character {
+    constructor(
+        private movements: MovementBehavior[],
+    ){}
+
+    move(){
+        for(const mv of this.movements){
+            mv.move();
+        }
+    }
+}
+
+function main(){
+    const swimmingChar = new Character([new SwimmingBehavior()]);
+    const flyingChar = new Character([new FlyingBehavior()]);
+    const swimmingAndFlyingChar = new Character([
+        new SwimmingBehavior(),
+        new FlyingBehavior(),
+    ]);
+    
+    swimmingChar.move();
+    fllyingChar.move();
+    swimmingAndFlyingChar.move();
+}
+
+main();
+```
+
+Truyền hành vi vào tức là `composition`.
+
+Tại sao lại nên chọn `composition` hơn là `inheritance`:
+- Không giới hạn số hành vi
+- Dễ mở rộng
+- Có thể thay đổi hành vi một cách linh hoạt
+- Tuân thủ theo nguyên lý `open/closed`
