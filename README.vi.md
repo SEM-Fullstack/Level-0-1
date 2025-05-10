@@ -48,6 +48,14 @@
       - [git push](#git-push)
       - [git pull](#git-pull)
       - [git branch](#git-branch)
+    - [Ngày 5 - Thực hành viết module đơn giản](#ngày-5---thực-hành-viết-module-đơn-giản)
+      - [User](#user)
+    - [Ngày 6 - React cơ bản](#ngày-6---react-cơ-bản)
+      - [JSX - TSX](#jsx---tsx)
+      - [useState](#usestate)
+      - [Props](#props)
+      - [Render Và Mount](#render-và-mount)
+      - [Thực hành](#thực-hành)
 
 
 ## Tuần 1 - Typescript & Git
@@ -889,3 +897,188 @@ git branch -v # list tất cả các branch
 git branch -b <new_branch> # Tạo branch mới "based on" code của branch hiện tại (kể cả chưa commit và chưa stag)
 git branch -D <branch> # Xoá một branch ở local, điều kiện là hiện đang không ở branch đó
 ```
+
+### Ngày 5 - Thực hành viết module đơn giản
+
+Chúng ta sẽ thực hành viết một module cho việc quản lý người dùng, với tính năng đơn giản là CRUD (Create, Read, Update, Delete).
+
+Toàn bộ code có thể được tìm thấy ở [practices/crud_users.ts](./practices/crud_user.ts)
+
+#### User
+
+Định nghĩa một type `User` với username, password và email
+
+```typescript
+type User {
+    username: string;
+    pasword: string;
+    email?: string;
+}
+```
+
+Hiện thực class `UserManager` hoặc `UserService` để code logic quản lý users.
+
+Hiện tại sẽ chỉ dùng in-memory list của User, chưa cần quan tâm đến Database.
+
+Yêu cầu:
+
+- [ ] in-memory list không được nhìn thấy và truy cập bởi bên ngoài
+- [ ] Kiểm tra xem `username` có tồn tại hay không, trước khi thực hiện Thêm, Xoá, Sửa và trả về lỗi `User already exists` (cho create) hoặc `User not found` nếu không tìm thấy (cho update và delete).
+- [ ] Hiện thực thêm user vào in-memory list
+- [ ] Hiện thực update user information
+- [ ] Hiện thực xoá user khỏi in-memoty list
+- [ ] Hiện thựac hoá tìm user bằng username, tìm bằng email hoặc tìm bằng cả hai
+
+### Ngày 6 - React cơ bản
+
+#### JSX - TSX
+
+Là khả năng cho phép viết html-tag like trong file .jsx hoặc .tsx, nói chung là gần giống html nhưng trong file có thể hiểu được javascript và typescript.
+
+```typescript
+export default ComponentA(){
+    return <div>
+        <button> This is a button </button>
+    </div>
+}
+```
+
+#### useState
+
+Một component có thể có `state` hoặc là không có state, component mà không có state gọi là `stateless` còn component có state gọi là `stateful`. Vậy state là gì? `state` tức là dữ liệu thuộc riêng về component đó.
+
+```typescript
+// Stateless component
+export function ComponentA(){
+    return <div>
+        <button> This is a button </button>
+    </div>
+}
+
+export function ComponentB(props: {meesage:string}){
+    return <div>
+        <button> {props.message} </button>
+    </div>
+}
+```
+
+`ComponentA` là stateless component vì nó không có dữ liệu tự thân nào hết. `ComponentB` cũng là stateless component, tuy rằng nó có nhận dữ liệu từ ngoài vào, tuy nhiên, dữ liệu đó không phải tự thân của nó, nó không quản lý dữ liệu đó.
+
+`useState` là một hook trong **React** cho phép chúng ta tạo dữ liệu tự thân cho component, biến nó thành `stateful` component.
+
+```typescript
+export default function ComponentC(){
+    const [count, setCount] = useState(0);
+
+    const onIncrement = () => {
+        setCount(count + 1);
+    }
+
+    const onDecrement = () => {
+        setCount(count - 1);
+    }   
+
+    const onReset = () => {
+        setCount(0);
+    }
+
+    return (
+        <div>
+            <h1>Counter App</h1>
+            <p>{count}</p>
+            <button onClick={onIncrement}>Increment</button>
+            <button onClick={onDecrement}>Decrement</button>
+            <button onClick={onReset}>Reset</button>
+        </div>
+    );
+}
+```
+
+`ComponentC` là một stateful component, nó chứa và quản lý một state tên là `count`, state này được tạo bởi `useState` với giá trị ban đầu là `0`, state count có thể được cập nhật qua hàm `setCount`, `setCount(1)` sẽ update giá trị của state count lại bằng `1`.
+
+#### Props
+
+Các component trong React có thể được truyền giá trị vào từ bên ngoài thông qua `props`. props là một object.
+
+```typescript
+export function ComponentD(props: {initialValue: number}){
+    const {initialValue} = props;
+    const [count, setCount] = useState(initialValue);
+
+    const onIncrement = () => {
+        setCount(count + 1);
+    }
+
+    const onDecrement = () => {
+        setCount(count - 1);
+    }   
+
+    const onReset = () => {
+        setCount(0);
+    }
+
+    return (
+        <div>
+            <h1>Counter App</h1>
+            <p>{count}</p>
+            <button onClick={onIncrement}>Increment</button>
+            <button onClick={onDecrement}>Decrement</button>
+            <button onClick={onReset}>Reset</button>
+        </div>
+    );
+}
+
+// Cách truyền
+<ComponentD initialValue={1} />
+```
+
+#### Render Và Mount
+
+- `Render`: Được hiểu là khi react tạo lại giao diện (Virtual DOM)
+- `Mount`: Là khi coponent lần đầu tiên được gắn vào DOM thực
+
+|                          | **Render**                                   | **Mount**                                        |
+| ------------------------ | -------------------------------------------- | ------------------------------------------------ |
+| **Xảy ra khi nào**       | Mỗi lần component **cần cập nhật giao diện** | **Lần đầu tiên** component xuất hiện trên DOM    |
+| **Chạy hàm component**   | ✅ Có                                         | ✅ Có                                             |
+| **Khởi tạo state/refs**  | ❌ Không (giữ nguyên state/refs cũ)           | ✅ Có (tạo state/refs lần đầu)                    |
+| **Chạy `useEffect([])`** | ❌ Không (chỉ khi mount hoặc unmount)         | ✅ Có                                             |
+| **Gắn vào DOM**          | Có thể không (chỉ là tạo Virtual DOM mới)    | ✅ Có (gắn lần đầu vào DOM)                       |
+| **Ví dụ thực tế**        | Nhấn nút **tăng count** trong CounterApp     | Lần đầu trang load hoặc thêm component bằng `{}` |
+
+Ví dụ so sánh:
+
+```typescript
+function Example() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    console.log("Mounted Example");
+    return () => console.log("Unmounted Example");
+  }, []);
+
+  console.log("Rendered Example");
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>Increase</button>
+    </div>
+  );
+}
+
+```
+
+`useEffect` và `state` sẽ được khởi tạo khi mount thành công lần đầu (tức là khi component xuất hiện trong DOM), còn khi ấn `Increase`, component đã mount, nên chỉ trigger re-render, tính toán lại Virtual DOM.
+
+> Việc trigger re-render chưa chắc đã trigger render lại DOM, vì chỉ khi có sự khác biệt với thực hiện render lại.
+
+#### Thực hành
+
+Viết một component đơn giản `CounterApp`.
+
+Yêu cầu:
+- [ ] Có state `count`, và có thể truyền initial state từ bên ngoài vào.
+- [ ] Có thể cộng 1 hoặc trừ 1 vào state
+
+Có thể xem bài hoàn chỉnh tại [counter_app](./practices/couter_app/main.tsx)
