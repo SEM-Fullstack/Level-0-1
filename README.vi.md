@@ -40,6 +40,14 @@
       - [Inheritance, Abstraction \& Polimorphism](#inheritance-abstraction--polimorphism)
         - [Inheritance \& Polymorphism](#inheritance--polymorphism)
         - [Abstraction](#abstraction)
+    - [Ngày 4 - git cơ bản](#ngày-4---git-cơ-bản)
+      - [init](#init)
+      - [add](#add)
+      - [commit](#commit)
+      - [git remote](#git-remote)
+      - [git push](#git-push)
+      - [git pull](#git-pull)
+      - [git branch](#git-branch)
 
 
 ## Tuần 1 - Typescript & Git
@@ -815,3 +823,69 @@ Tại sao lại nên chọn `composition` hơn là `inheritance`:
 - Dễ mở rộng
 - Có thể thay đổi hành vi một cách linh hoạt
 - Tuân thủ theo nguyên lý `open/closed`
+
+### Ngày 4 - git cơ bản
+
+#### init
+
+Tạo một git repo mới tại local, chỉ chạy một lần.
+
+```bash
+git init
+```
+
+#### add
+
+Dùng để stage một thay đổi
+
+```bash
+git add <path_to_file>
+git add . # Thêm toàn bộ file đã thay đổi
+```
+
+#### commit
+
+Dùng để commit một thay đổi trong file system.
+
+```bash
+git commit # commit thay đổi
+git commit -m "<message>" # commit thay đổi với message
+```
+
+#### git remote
+
+Dùng để thêm, xoá, thay đổi remote repository link với local repository, như github, bitbucket, gitlab
+
+```bash
+git remote add origin <url> # Thêm một remote path
+git remote set origin <url> # Thay đổi url của một remote URL
+git remote -v # List tất cả remote link
+git remote remove <name> # Xoá remote khỏi git hiện tại
+```
+
+#### git push
+
+Dùng để đẩy thay đổi (các commit) trong branch hiện tại lên trên remote repository.
+
+```bash
+git push
+```
+
+#### git pull
+
+Dùng để kéo các thay đổi (commits) từ remote repository về branch hiện tại
+
+```bash
+git pull
+git pull origin main # Kéo các thay đổi từ branch main của origin remote và merge vào branch hiện tại
+```
+
+#### git branch
+
+Dùng để thực hiện các thao tác với branch
+
+```bash
+git branch -v # list tất cả các branch
+git branch -b <new_branch> # Tạo branch mới "based on" code của branch hiện tại (kể cả chưa commit và chưa stag)
+git branch -D <branch> # Xoá một branch ở local, điều kiện là hiện đang không ở branch đó
+```
