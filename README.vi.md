@@ -56,6 +56,10 @@
       - [Props](#props)
       - [Render Và Mount](#render-và-mount)
       - [Thực hành](#thực-hành)
+  - [Tuần 2 - Capstone Product](#tuần-2---capstone-product)
+    - [Ngày 1 - Chuẩn bị dữ liệu và service](#ngày-1---chuẩn-bị-dữ-liệu-và-service)
+      - [Chuẩn bị kiểu dữ liệu](#chuẩn-bị-kiểu-dữ-liệu)
+      - [Chuẩn bị MoodService](#chuẩn-bị-moodservice)
 
 
 ## Tuần 1 - Typescript & Git
@@ -1082,3 +1086,130 @@ Yêu cầu:
 - [ ] Có thể cộng 1 hoặc trừ 1 vào state
 
 Có thể xem bài hoàn chỉnh tại [counter_app](./practices/couter_app/main.tsx)
+
+## Tuần 2 - Capstone Product
+
+Kể từ tuần này chúng mình sẽ cùng nhau hiện thực hoá một app vui vui, tên là `Mood Journal`, dùng như là nhật ký cảm xúc.
+
+Chi tiết cụ thể sẽ ở [Mood Journal](./CAPSTONE_PRODUCT.vi.md).
+
+App này sẽ dùng [`NextJs`](https://nextjs.org/) một React Framework, giúp viết app nhanh và gọn hơn với Front-end và Back-end cùng chung một project.
+
+### Ngày 1 - Chuẩn bị dữ liệu và service
+
+#### Chuẩn bị kiểu dữ liệu
+
+Chúng ta sẽ có 2 kiểu dữ liệu chính, đó là `Mood` một enum để diễn tả cảm xúc, và `MoodEntry` một record cụ thể theo ngày.
+
+Các kiểu dữ liệu trong dự án sẽ thường được lưu trong folder `types`.
+
+```typescript
+// ./types/index.ts
+
+/**
+ * Mood is an enum that represents the mood of the user.
+ * It can be one of the following values:
+ * - ANGRY
+ * - SAD
+ * - NEUTRAL
+ * - HAPPY
+ * - EXCITED
+ */
+export enum Mood {
+    ANGRY = 'angry',
+    SAD = 'sad',
+    NEUTRAL = 'neutral',
+    HAPPY = 'happy',
+    EXCITED = 'excited',
+}
+
+/**
+ * MoodEmoji is an object that maps each mood to its corresponding emoji.
+ */
+export const MoodEmoji = {
+    [Mood.ANGRY]: '🤬',
+    [Mood.SAD]: '😔',
+    [Mood.NEUTRAL]: '😐',
+    [Mood.HAPPY]: '😊',
+    [Mood.EXCITED]: '🤩',
+}
+
+/**
+ * MoodToNumber is an object that maps each mood to its corresponding number.
+ */
+export const MoodToNumber = {
+    [Mood.ANGRY]: 0,
+    [Mood.SAD]: 1,
+    [Mood.NEUTRAL]: 2,
+    [Mood.HAPPY]: 3,
+    [Mood.EXCITED]: 4,
+}
+
+/**
+ * MoodEntry is a record that represents a mood entry.
+ */
+export type MoodEntry = {
+    /**
+     * The id of the mood entry.
+     */
+    id: string;
+    /**
+     * The mood of the user.
+     */
+    mood: Mood;
+    /**
+     * The note of the user.
+     */
+    note: string;
+    /**
+     * The created at date of the mood entry.
+     */
+    createdAt: string; // ISO 8601
+}
+```
+
+Bởi vì app nhỏ nên chỉ cần gôm mọi type vào trong file index là đủ.
+
+#### Chuẩn bị MoodService
+
+`MoodService` có vai trò thực hiện các thao tác liên quan đến `MoodEntry` như thêm, xoá, phân loại,...
+
+Các service đơn giản sẽ nằm trong `services` folder.
+
+> Lưu ý là các service này sẽ làm việc ở phía back-end, không phải front-end.
+
+Install `short-uuid`
+
+```bash
+pnpm add short-uuid
+```
+
+```typescript
+// ./services/mood.server.ts
+import { MoodEntry } from "@/types";
+import { generate } from 'short-uuid';
+
+export type CreateMoodEntry = Omit<MoodEntry, 'id' | 'createdAt'>;
+
+export class MoodService {
+    private moods: MoodEntry[] = [];
+
+    addMood(mood: CreateMoodEntry) {
+        const newMood: MoodEntry = {
+            id: generate(),
+            mood: mood.mood,
+            note: mood.note,
+            createdAt: new Date().toISOString(),
+        }
+        this.moods.push(newMood);
+    }
+
+    deleteMood(id: string) {
+        this.moods = this.moods.filter((moodEntry) => moodEntry.id !== id);
+    }
+
+    getMoods() {
+        return this.moods;
+    }
+}
+```
