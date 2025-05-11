@@ -24,7 +24,7 @@ export const MoodEmoji = {
     [Mood.NEUTRAL]: '😐',
     [Mood.HAPPY]: '😊',
     [Mood.EXCITED]: '🤩',
-}
+};
 
 /**
  * MoodToNumber is an object that maps each mood to its corresponding number.
@@ -35,7 +35,7 @@ export const MoodToNumber = {
     [Mood.NEUTRAL]: 2,
     [Mood.HAPPY]: 3,
     [Mood.EXCITED]: 4,
-}
+};
 
 /**
  * MoodEntry is a record that represents a mood entry.
@@ -57,4 +57,4 @@ export type MoodEntry = {
      * The created at date of the mood entry.
      */
     createdAt: string; // ISO 8601
-}
+};

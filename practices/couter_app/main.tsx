@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 export default function CounterApp(props: { initialValue: number }) {
     const { initialValue } = props;
@@ -6,15 +6,15 @@ export default function CounterApp(props: { initialValue: number }) {
 
     const onIncrement = () => {
         setCount(count + 1);
-    }
+    };
 
     const onDecrement = () => {
         setCount(count - 1);
-    }
+    };
 
     const onReset = () => {
         setCount(0);
-    }
+    };
 
     return (
         <div>
