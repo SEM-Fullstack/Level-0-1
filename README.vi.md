@@ -60,6 +60,8 @@
     - [Ngày 1 - Chuẩn bị dữ liệu và service](#ngày-1---chuẩn-bị-dữ-liệu-và-service)
       - [Chuẩn bị kiểu dữ liệu](#chuẩn-bị-kiểu-dữ-liệu)
       - [Chuẩn bị MoodService](#chuẩn-bị-moodservice)
+    - [Ngày 2 - Chuẩn bị giao diện](#ngày-2---chuẩn-bị-giao-diện)
+      - [Components](#components)
 
 
 ## Tuần 1 - Typescript & Git
@@ -1213,3 +1215,334 @@ export class MoodService {
     }
 }
 ```
+
+### Ngày 2 - Chuẩn bị giao diện
+
+Trong `NextJs (App Router)`, `/app/page.tsx` sẽ là entry point.
+
+Chúng mình sẽ dùng một thư viện component đó là [`ShadcnUI`](https://ui.shadcn.com/).
+
+```bash
+pnpm dlx shadcn@latest init
+```
+
+Trong lúc install, cứ chọn `Neutral` style.
+
+```bash
+pnpm run dev
+```
+
+Chạy dev server, sau đó chúng ta có thể truy cập trang web tại [`http://localhost:3000`](http://localhost:3000)
+
+![First look web site](./public/images/01.png)
+
+#### Components
+
+Một app `React` luôn luôn được tạo từ các components, các components này sẽ thường được để vào thư mục `components`.
+
+Thay đoạn code này vào trong `app/page.tsx`.
+
+```typescript
+export default function Home() {
+  return <div>Hello World</div>;
+}
+```
+
+Tại trang Home sẽ hiển thị các mood entry đã được ghi lại.
+
+Chúng mình sẽ viết một hàm tạo danh sách các mood ảo.
+
+```typescript
+/**
+ * Randomly generate a list of mood entries
+ */
+function SampleMoodEntry(number: number): MoodEntry[]{
+  const moods = [
+    Mood.ANGRY,
+    Mood.SAD,
+    Mood.NEUTRAL,
+    Mood.HAPPY,
+    Mood.EXCITED,
+  ];
+  const notes = [
+    'I am happy',
+    'I am sad',
+    'I am neutral',
+    'I am excited',
+    'I am angry',
+  ];
+  
+  return Array.from({length: number}, () => ({
+    id: generate(),
+    mood: moods[Math.floor(Math.random() * moods.length)],
+    note: notes[Math.floor(Math.random() * notes.length)],
+    createdAt: new Date().toISOString(),
+  }));
+}
+```
+
+Component Home sẽ có cấu trúc cơ bản như sau
+
+```typescript
+export default function Home() {
+  const [moodEntries, setMoodEntries] = useState<MoodEntry[]>(SampleMoodEntry(15));
+  
+  useEffect(() => {
+    // TODO: Fetch mood entries from the database
+  }, []);
+
+  return (
+    <div>
+      <h1>Mood Tracker</h1>
+      <div>
+        <h2>Moods</h2>
+        <div>
+          {moodEntries.map((moodEntry) => (
+            <div key={moodEntry.id}>{moodEntry.mood}</div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+Component Home sẽ là một stateful component, nó chứa một state là `moodEntries` thông qua `useState` hook.
+
+Ban đầu `moodEntries` sẽ chứa 15 moodEntries đã được generate ra.
+
+`useEffect` hook sẽ được gọi lại khi giá trị của các dependency thay đổi, hiện tại nó không có dependency, nên sẽ chỉ được gọi một lần khi `mount`. Mục đích thông thường của `useEffect` là để cập nhật lại state của component từ một remote server, hiện tại chưa có server nào nên sẽ để trống.
+
+Lúc này trang Home sẽ giống như vầy.
+
+![Error Server](./public/images/Error_01.png)
+
+Lỗi vì trong NextJs, mặc định các `Page` sẽ là **Server Component**, hiểu đơn giản là component sẽ được render trước ở server. Nhưng mà các `hooks` lại thuộc về **Client Component** tức là chỉ dùng được khi component đã xuất hiện ở Browser. Để sửa lỗi này, thêm "use client" trên đầu `app/page.tsx`, "use client" sẽ thông báo component này là client component.
+
+Sau khi sữa lỗi, sẽ thấy giống vầy: ![Simple Home Page](./public/images/02.png)
+
+Trong app này chúng ta cũng sẽ dùng [`Tailwindcss`](https://tailwindcss.com/) một `css class utilities` library giúp cho chúng ta có thể code nhanh hơn trong file .tsx mà không cần phải nhảy qua lại giữa file code và file .css.
+
+Chúng mình cũng sẽ dùng một theme custom tại [Tweakcn.com](https://tweakcn.com/)
+
+```bash
+pnpm dlx shadcn@latest add https://tweakcn.com/r/themes/cyberpunk.json
+```
+
+Sửa Home component lại một chút
+
+```typescript
+export default function Home() {
+  const [moodEntries, setMoodEntries] = useState<MoodEntry[]>(SampleMoodEntry(15));
+  
+  useEffect(() => {
+    // TODO: Fetch moods from the database
+  }, []);
+
+  return (
+    <div className="flex flex-col items-center justify-center h-screen">
+      <h1 className="text-9xl font-bold">Mood Tracker</h1>
+      <div className="flex flex-col items-center justify-center mt-10">
+        <h2 className="text-xl font-bold">Mood Entries</h2>
+        <div className="flex flex-col items-center justify-center mt-10">
+          {moodEntries.map((moodEntry) => (
+            <div key={moodEntry.id}>{moodEntry.mood}</div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+Giao diện sau khi sửa đổi là.
+![After Update](./public/images/03.png)
+
+Chúng mình sẽ thêm một button để add mood.
+
+```bash
+pnpm dlx shadcn@latest add button tooltip # Cài button, tooltip từ shadcn
+```
+
+Sau khi cài từ `shadcnUI` mọi file sẽ nằm trong `components/ui` và chúng ta có thể thoải mái tuỳ chỉnh nếu cần.
+
+```typescript
+export default function Home() {
+  const [moodEntries, setMoodEntries] = useState<MoodEntry[]>(SampleMoodEntry(15));
+
+  useEffect(() => {
+    // TODO: Fetch moods from the database
+  }, []);
+
+  const handleAddMood = () => {
+    // TODO: Add mood to the database
+    // Below is just a sample
+    setMoodEntries([...moodEntries, {
+      id: generate(),
+      mood: Mood.HAPPY,
+      note: 'I am happy',
+      createdAt: new Date().toISOString(),
+    }]);
+  }
+
+  return (
+    <TooltipProvider>
+      <div className="flex flex-col items-center justify-center h-screen">
+        <div className="flex flex-col items-center justify-center mt-10">
+          <h1 className="text-9xl font-bold text-center mb-10">Mood Tracker</h1>
+          <div className="flex flex-col items-center justify-center">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button onClick={handleAddMood}><Plus className="size-4" /></Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                Add Mood
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        </div>
+        <div className="flex flex-col mt-10 mb-10 h-full flex-1 items-center">
+          <h2 className="text-xl font-bold mb-10 text-center">Mood Entries</h2>
+            <div className="flex flex-col items-center">
+              {moodEntries.map((moodEntry) => (
+                <div key={moodEntry.id}>{moodEntry.mood}</div>
+              ))}
+            </div>
+        </div>
+      </div>
+    </TooltipProvider>
+  )
+}
+```
+
+Tiếp theo chúng ta sẽ tạo các thẻ cho Mood Entry, `MoodEntryComponent`. Vì đây không phải là một ultility component (tính đến hiện tại) nên nó sẽ không nằm trong `components/ui` mà nằm ngoài tại `components`. [mood-entry.tsx](./components/mood-entry.tsx)
+
+```typescript
+// components/mood-entry.tsx
+import { MoodEmoji, MoodEntry } from "@/types";
+import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import moment from "moment";
+import { cn } from "@/lib/utils";
+
+const formatDate = (date: string) => {
+    return moment(date).format("DD/MM/YYYY");
+}
+
+export default function MoodEntryComponent(props: {
+    moodEntry: MoodEntry
+    className?: string
+}) {
+    return <Card className={cn("w-[300px]", props.className)}>
+        <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+                <span className="text-2xl">{MoodEmoji[props.moodEntry.mood]}</span>
+                <span className="text-lg">{props.moodEntry.mood}</span>
+            </CardTitle>
+            <CardDescription className="text-sm flex flex-col gap-2">
+                <span className="text-gray-500">{formatDate(props.moodEntry.createdAt)}</span>
+                <span className="text-gray-500">{props.moodEntry.note}</span>
+            </CardDescription>
+        </CardHeader>
+    </Card>
+}
+```
+
+Để install Card component, run
+
+```bash
+pnpm dlx shadcn@latest add card
+```
+
+Sau đó thay vào trong Home Page chúng ta sẽ có một page như vầy: ![Update Mood Entry](./public/images/04.png).
+
+Khi ấn nút "add", sẽ chuyển sang trang `/add` để ghi lại mood mới. Trước tiên cần tạo trang Add.
+
+Trong NextJs để tạo một route khác, tạo một folder mới và expose `page.tsx` trong folder đó, vậy chúng mình sẽ tạo `app/add` folder và `app/add/page.tsx`.
+
+```typescript
+export default function AddPage() {
+    return <div>Add</div>
+}
+```
+
+Giờ chúng ta có thể truy cập vào `/add` bằng [`http://localhost:3000/add`](http://localhost:3000/add)
+
+Đây sẽ là một trang Add đơn giản
+
+```typescript
+'use client';
+
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormItem, FormLabel } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Mood, MoodEmoji } from "@/types";
+import { FieldValues, useForm } from "react-hook-form";
+
+export default function AddPage() {
+    const moods = [
+        Mood.ANGRY,
+        Mood.SAD,
+        Mood.NEUTRAL,
+        Mood.HAPPY,
+        Mood.EXCITED,
+    ];
+    const form = useForm<FieldValues>({
+        defaultValues: {
+            mood: "",
+            notes: "",
+        },
+    });
+
+    const onSelectMood = (value: string) => {
+        form.setValue("mood", value);
+    }
+
+    const onSubmit = (data: FieldValues) => {
+        alert(JSON.stringify(data));
+    }
+
+    return <div className="flex flex-col items-center h-screen w-full mx-auto">
+        <h1 className="text-6xl font-bold my-10">Add Mood Entry</h1>
+        <div className="w-1/2">
+            <Form {...form}>
+                <FormItem className="mb-4">
+                    <FormLabel className="text-2xl font-bold mb-2">Mood</FormLabel>
+                    <FormControl>
+                        <Select
+                            onValueChange={onSelectMood}
+                            defaultValue={form.watch("mood")}
+                        >
+                            <FormItem>
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select a mood" />
+                                    </SelectTrigger>
+                                </FormControl>
+                            </FormItem>
+                            <SelectContent>
+                                {moods.map((mood) => (
+                                    <SelectItem key={mood} value={mood}>{`${mood} ${MoodEmoji[mood]}`}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </FormControl>
+                </FormItem>
+                <FormItem className="mb-4">
+                    <FormLabel className="text-2xl font-bold mb-2">Notes</FormLabel>
+                    <FormControl>
+                        <Textarea {...form.register("notes")} />
+                    </FormControl>
+                </FormItem>
+                <Button type="submit" className="w-full"
+                    onClick={form.handleSubmit(onSubmit)}
+                >Add</Button>
+            </Form>
+        </div>
+    </div>
+}
+```
+
+Chúng ta sẽ cần install thêm form, seclect, textarea từ _Shadcn_.
+
+![Add Page](./public/images/05.png)
