@@ -12,13 +12,14 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Mood, MoodEmoji } from '@/types';
 import { FieldValues, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 export default function AddPage() {
     const moods = [Mood.ANGRY, Mood.SAD, Mood.NEUTRAL, Mood.HAPPY, Mood.EXCITED];
     const form = useForm<FieldValues>({
         defaultValues: {
             mood: '',
-            notes: '',
+            note: '',
         },
     });
 
@@ -27,7 +28,19 @@ export default function AddPage() {
     };
 
     const onSubmit = (data: FieldValues) => {
-        alert(JSON.stringify(data));
+        const addMood = async () => {
+            const response = await fetch('/api/mood', {
+                method: 'POST',
+                body: JSON.stringify(data),
+            });
+            if (response.ok) {
+                toast.success('Mood added successfully');
+            } else {
+                const responseData = await response.json();
+                toast.error(responseData.error);
+            }
+        };
+        addMood();
     };
 
     return (
@@ -60,7 +73,7 @@ export default function AddPage() {
                     <FormItem className="mb-4">
                         <FormLabel className="text-2xl font-bold mb-2">Notes</FormLabel>
                         <FormControl>
-                            <Textarea {...form.register('notes')} />
+                            <Textarea {...form.register('note')} />
                         </FormControl>
                     </FormItem>
                     <Button type="submit" className="w-full" onClick={form.handleSubmit(onSubmit)}>

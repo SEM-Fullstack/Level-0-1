@@ -12,40 +12,19 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from './ui/alert-dialog';
+import { useState } from 'react';
 
 const formatDate = (date: string) => {
     return moment(date).format('DD/MM/YYYY HH:mm');
 };
-
-function DeleteEnsuringDialog(props: { moodEntry: MoodEntry; onDelete: (id: string) => void }) {
-    return (
-        <AlertDialog>
-            <AlertDialogTrigger asChild>
-                <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => {
-                        props.onDelete(props.moodEntry.id);
-                    }}
-                >
-                    <Trash2 className="size-4" color="red" />
-                </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-                <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                    <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
-                </AlertDialogHeader>
-            </AlertDialogContent>
-        </AlertDialog>
-    );
-}
 
 export default function MoodEntryComponent(props: {
     moodEntry: MoodEntry;
     className?: string;
     onDelete: (id: string) => void;
 }) {
+    const [isOpen, setIsOpen] = useState(false);
+
     return (
         <Card className={cn('w-full', props.className)}>
             <CardHeader>
@@ -59,15 +38,35 @@ export default function MoodEntryComponent(props: {
                 </CardDescription>
             </CardHeader>
             <CardContent className="flex justify-end">
-                <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => {
-                        props.onDelete(props.moodEntry.id);
-                    }}
-                >
-                    <Trash2 className="size-4" color="red" />
-                </Button>
+                <AlertDialog open={isOpen}>
+                    <AlertDialogTrigger asChild>
+                        <Button variant="outline" size="icon" onClick={() => setIsOpen(true)}>
+                            <Trash2 className="size-4" color="red" />
+                        </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        </AlertDialogHeader>
+                        <AlertDialogDescription className="flex flex-col gap-4">
+                            <p>Are you sure you want to delete your feeling 🥺?</p>
+                            <div className="flex gap-2">
+                                <Button variant="outline" onClick={() => setIsOpen(false)}>
+                                    No, I am not sure
+                                </Button>
+                                <Button
+                                    variant="destructive"
+                                    onClick={() => {
+                                        setIsOpen(false);
+                                        props.onDelete(props.moodEntry.id);
+                                    }}
+                                >
+                                    I'm sure
+                                </Button>
+                            </div>
+                        </AlertDialogDescription>
+                    </AlertDialogContent>
+                </AlertDialog>
             </CardContent>
         </Card>
     );

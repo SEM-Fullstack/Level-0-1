@@ -1,5 +1,5 @@
 import { MoodService } from '@/services/mood.service';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -22,7 +22,11 @@ export async function POST(request: Request) {
     try {
         const body = await request.json();
         const mood = await MoodService.getInstance().addMood(body);
-        return NextResponse.json(mood);
+        return NextResponse.json({
+            success: true,
+            message: 'Mood added successfully',
+            data: mood,
+        });
     } catch (e: any) {
         return NextResponse.json(
             {
@@ -36,11 +40,14 @@ export async function POST(request: Request) {
     }
 }
 
-export async function DELETE(request: Request) {
+export async function DELETE(request: NextRequest) {
     try {
         const body = await request.json();
         const mood = await MoodService.getInstance().deleteMood(body.id);
-        return NextResponse.json(mood);
+        return NextResponse.json({
+            success: true,
+            message: 'Mood deleted successfully',
+        });
     } catch (e: any) {
         if (e.message === 'Mood not found') {
             return NextResponse.json(

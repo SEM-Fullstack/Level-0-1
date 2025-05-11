@@ -50,12 +50,14 @@ export class MoodService {
             createdAt: new Date().toISOString(),
         };
         this.moods.push(newMood);
+        return newMood;
     }
 
     deleteMood(id: string) {
         const index = this.moods.findIndex(moodEntry => moodEntry.id === id);
         if (index !== -1) {
             this.moods.splice(index, 1);
+            return true;
         } else {
             throw new Error('Mood not found');
         }
